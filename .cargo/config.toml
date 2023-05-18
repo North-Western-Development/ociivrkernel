@@ -2,4 +2,4 @@
 target = "riscv64imac-unknown-none-elf"
 
 [target.riscv64imac-unknown-none-elf]
-runner = "qemu-system-riscv64 -machine virt -cpu rv64 -m 128M -bios none -serial mon:stdio -nographic -kernel"
+runner = "qemu-system-riscv64 -machine virt -cpu rv64 -m 32M -bios "

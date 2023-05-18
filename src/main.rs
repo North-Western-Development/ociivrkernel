@@ -1,8 +1,8 @@
 #![no_std]
 #![no_main]
-#![feature(naked_functions)]
+#![feature(naked_functions, panic_info_message)]
 
-use core::panic::PanicInfo;
+use core::{panic::PanicInfo, ptr::write_volatile};
 
 #[naked]
 #[no_mangle]
@@ -28,15 +28,22 @@ unsafe extern "C" fn _start() -> ! {
 }
 
 extern "C" fn entry() -> ! {
-    let mut console = unsafe { uart::Device::new(0x1000_0148) };
-    for byte in "Hello, world!".bytes() {
-        console.put(byte);
-    }
+    unsafe { uart::init_console(0x1000_0148) };
+
+    print!("\x1b[2J");
+
+    print!("\x1b[0;0H");
+
+    print!("\x1b[1;31mHello world\x1b[0m");
+
+    print!("\x1b[2;0H");
+    //println!("Hello world");
     loop {}
 }
 
 #[panic_handler]
 fn on_panic(info: &PanicInfo) -> ! {
+    println!("\x1b[1;31mPanic: {}\x1b[0m", info.message().unwrap());
     loop {}
 }
 
